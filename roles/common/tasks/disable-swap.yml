@@ -1,0 +1,11 @@
+---
+- name: Disable swap
+  # Fully Qualified Collection Name ansible.builtin.something
+  ansible.builtin.command: swapoff -a
+
+- name: Remove swap entries from /etc/fstab
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: '\sswap\s'
+    state: absent
+  register: fstab_result

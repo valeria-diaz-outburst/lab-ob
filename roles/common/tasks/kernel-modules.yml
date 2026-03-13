@@ -1,0 +1,22 @@
+---
+- name: Create /etc/modules-load.d/k8s.conf with required modules
+  ansible.builtin.copy:
+    dest: /etc/modules-load.d/k8s.conf
+    content: |
+      overlay
+      br_netfilter
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Load overlay kernel module
+  community.general.modprobe:
+    name: overlay
+    state: present
+
+- name: Load br_netfilter kernel module
+  community.general.modprobe:
+    name: br_netfilter
+    state: present
+
+

@@ -1,0 +1,35 @@
+---
+- name: Check if cluster is already initialized
+  ansible.builtin.stat:
+    path: /etc/kubernetes/admin.conf
+  register: kubeadm_already_init
+
+- name: Initialize Kubernetes control plane
+  ansible.builtin.command: kubeadm init --pod-network-cidr={{ pod_network_cidr }}
+  when: not kubeadm_already_init.stat.exists
+
+- name: Create .kube directory for ansible user
+  ansible.builtin.file:
+    path: /home/ansible/.kube
+    state: directory
+    owner: ansible
+    group: ansible
+    mode: "0755"
+
+- name: Copy admin.conf to user kubeconfig
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/ansible/.kube/config
+    remote_src: true
+    owner: ansible
+    group: ansible
+    mode: "0600"
+
+- name: Generate cluster join command
+  ansible.builtin.command: kubeadm token create --print-join-command
+  register: join_command
+  changed_when: false
+
+- name: Store join command as fact for workers
+  ansible.builtin.set_fact:
+    kubeadm_join_command: "{{ join_command.stdout }}"

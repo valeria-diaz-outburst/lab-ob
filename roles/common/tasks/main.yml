@@ -1,0 +1,15 @@
+---
+- name: Disable swap
+  ansible.builtin.include_tasks: disable-swap.yml
+
+- name: Kernel Modules
+  ansible.builtin.include_tasks: kernel-modules.yml
+
+- name: Sysctl
+  ansible.builtin.include_tasks: sysctl.yml
+
+- name: Install packages
+  ansible.builtin.include_tasks: install-packages.yml
+
+- name: Install containerd
+  ansible.builtin.include_tasks: containerd-config.yml

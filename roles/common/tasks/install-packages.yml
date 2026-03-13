@@ -1,0 +1,61 @@
+---
+- name: Install apt transport prerequisites
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+    state: present
+    update_cache: truez
+
+- name: Add Kubernetes apt signing key
+  ansible.builtin.get_url:
+    url: "{{ k8s_apt_key }}"
+    dest: /etc/apt/keyrings/k8s.gpg
+    mode: "0644"
+    force: true
+
+- name: Add Kubernetes apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/k8s.gpg] {{ k8s_apt_repo }} /"
+    filename: kubernetes
+    state: present
+
+- name: Add Docker apt signing key
+  ansible.builtin.get_url:
+    url: "{{ docker_apt_key }}"
+    dest: /etc/apt/keyrings/docker.gpg
+    mode: "0644"
+    force: true
+
+- name: Add Docker apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] {{ docker_apt_repo }} {{ ansible_distribution_release }} stable"
+    filename: docker
+    state: present
+
+- name: Install containerd.io
+  ansible.builtin.apt:
+    name: "containerd.io={{ containerd_version }}*"
+    state: present
+    update_cache: true
+
+- name: Install kubelet, kubeadm, and kubectl
+  ansible.builtin.apt:
+    name:
+      - "kubelet={{ k8s_version }}*"
+      - "kubeadm={{ k8s_version }}*"
+      - "kubectl={{ k8s_version }}*"
+    state: present
+    update_cache: true
+
+- name: Hold Kubernetes packages at current version
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+    - containerd.io

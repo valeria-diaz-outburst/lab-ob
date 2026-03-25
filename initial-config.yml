@@ -11,8 +11,8 @@
   roles:
     - master
 
-- name: Join workers to the cluster
-  hosts: k8s_workers
-  become: true
-  roles:
-    - worker
+#- name: Join workers to the cluster
+#  hosts: k8s_workers
+#  become: true
+#  roles:
+#    - worker

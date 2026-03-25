@@ -12,4 +12,4 @@
   ansible.builtin.include_tasks: install-packages.yml
 
 - name: Install containerd
-  ansible.builtin.include_tasks: containerd-config.yml
+  ansible.builtin.include_tasks: containerd.yml

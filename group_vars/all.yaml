@@ -1,5 +1,5 @@
 k8s_version: "1.32"
-containerd_version: "1.7.11"
+containerd_version: "1.7.28-0"
 calico_version: "3.31.1"
 pod_network_cidr: "172.16.0.0/22"
 k8s_apt_repo: "https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/"

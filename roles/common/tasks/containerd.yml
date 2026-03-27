@@ -12,6 +12,13 @@
   args:
     creates: /etc/containerd/config.toml
 
+- name: Remove CRI from disabled plugins
+  ansible.builtin.replace:
+    path: /etc/containerd/config.toml
+    regexp: 'disabled_plugins\s*=\s*\["cri"\]'
+    replace: 'disabled_plugins = []'
+    notify: Restart containerd
+
 - name: Enable SystemdCgroup in containerd config
   ansible.builtin.replace:
     path: /etc/containerd/config.toml

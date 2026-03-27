@@ -9,12 +9,17 @@
     state: present
     update_cache: true
 
+- name: Ensure keyrings directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
 - name: Add Kubernetes apt signing key
-  ansible.builtin.get_url:
-    url: "{{ k8s_apt_key }}"
-    dest: /etc/apt/keyrings/k8s.gpg
-    mode: "0644"
-    force: true
+  ansible.builtin.shell:
+    cmd: curl -fsSL "{{ k8s_apt_key }}" | gpg --dearmor -o /etc/apt/keyrings/k8s.gpg
+  args:
+    creates: /etc/apt/keyrings/k8s.gpg
 
 - name: Add Kubernetes apt repository
   ansible.builtin.apt_repository:
@@ -23,11 +28,10 @@
     state: present
 
 - name: Add Docker apt signing key
-  ansible.builtin.get_url:
-    url: "{{ docker_apt_key }}"
-    dest: /etc/apt/keyrings/docker.gpg
-    mode: "0644"
-    force: true
+  ansible.builtin.shell:
+    cmd: curl -fsSL "{{ docker_apt_key }}" | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  args:
+    creates: /etc/apt/keyrings/docker.gpg
 
 - name: Add Docker apt repository
   ansible.builtin.apt_repository:

@@ -17,7 +17,7 @@
     path: /etc/containerd/config.toml
     regexp: 'disabled_plugins\s*=\s*\["cri"\]'
     replace: 'disabled_plugins = []'
-    notify: Restart containerd
+  notify: Restart containerd
 
 - name: Enable SystemdCgroup in containerd config
   ansible.builtin.replace:

@@ -1,0 +1,42 @@
+---
+- name: Download Calico operator manifest
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/projectcalico/calico/v{{ calico_version }}/manifests/tigera-operator.yaml"
+    dest: /tmp/tigera-operator.yaml
+    mode: "0644"
+
+- name: Apply Calico operator
+  ansible.builtin.command: kubectl apply -f /tmp/tigera-operator.yaml
+  environment:
+    KUBECONFIG: /home/ansible/.kube/config
+
+- name: Create Calico custom resources manifest
+  ansible.builtin.copy:
+    dest: /tmp/calico-custom-resources.yaml
+    mode: "0644"
+    content: |
+      apiVersion: operator.tigera.io/v1
+      kind: Installation
+      metadata:
+        name: default
+      spec:
+        calicoNetwork:
+          ipPools:
+          - name: default-ipv4-pool
+            cidr: {{ pod_network_cidr }}
+            encapsulation: VXLANCrossSubnet
+
+- name: Apply Calico custom resources
+  ansible.builtin.command: kubectl apply -f /tmp/calico-custom-resources.yaml
+  environment:
+    KUBECONFIG: /home/ansible/.kube/config
+
+- name: Wait for Calico node pods to be ready
+  ansible.builtin.command: >
+    kubectl wait --for=condition=ready pod
+    -l k8s-app=calico-node
+    -n calico-system
+    --timeout=180s
+  environment:
+    KUBECONFIG: /home/ansible/.kube/config
+  changed_when: false

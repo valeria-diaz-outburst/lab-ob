@@ -33,3 +33,6 @@
 - name: Store join command as fact for workers
   ansible.builtin.set_fact:
     kubeadm_join_command: "{{ join_command.stdout }}"
+
+- name: Install Calico CNI
+  ansible.builtin.include_tasks: calico.yml

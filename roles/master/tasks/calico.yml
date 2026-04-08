@@ -10,6 +10,15 @@
   environment:
     KUBECONFIG: /home/ansible/.kube/config
 
+- name: Wait for Tigera operator to be ready
+  ansible.builtin.command: >
+    kubectl rollout status deployment/tigera-operator
+    -n tigera-operator
+    --timeout=120s
+  environment:
+    KUBECONFIG: /home/ansible/.kube/config
+  changed_when: false
+
 - name: Create Calico custom resources manifest
   ansible.builtin.copy:
     dest: /tmp/calico-custom-resources.yaml

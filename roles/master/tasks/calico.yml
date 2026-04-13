@@ -1,4 +1,12 @@
 ---
+- name: Wait for node to be Ready before installing Calico
+  ansible.builtin.command: >
+    kubectl wait --for=condition=Ready node --all
+    --timeout=300s
+  environment:
+    KUBECONFIG: /home/ansible/.kube/config
+  changed_when: false
+
 - name: Download Calico operator manifest
   ansible.builtin.get_url:
     url: "https://raw.githubusercontent.com/projectcalico/calico/v{{ calico_version }}/manifests/tigera-operator.yaml"
@@ -14,7 +22,7 @@
   ansible.builtin.command: >
     kubectl rollout status deployment/tigera-operator
     -n tigera-operator
-    --timeout=120s
+    --timeout=300s
   environment:
     KUBECONFIG: /home/ansible/.kube/config
   changed_when: false
@@ -45,7 +53,7 @@
     kubectl wait --for=condition=ready pod
     -l k8s-app=calico-node
     -n calico-system
-    --timeout=180s
+    --timeout=300s
   environment:
     KUBECONFIG: /home/ansible/.kube/config
   changed_when: false

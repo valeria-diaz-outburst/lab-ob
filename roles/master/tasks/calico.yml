@@ -30,10 +30,20 @@
         name: default
       spec:
         calicoNetwork:
+          nodeAddressAutodetectionV4:
+            interface: "eth.*|ens.*|enp.*"
           ipPools:
           - name: default-ipv4-pool
             cidr: {{ pod_network_cidr }}
             encapsulation: VXLANCrossSubnet
+            natOutgoing: Enabled
+            nodeSelector: all()
+      ---
+      apiVersion: operator.tigera.io/v1
+      kind: APIServer
+      metadata:
+        name: default
+      spec: {}
 
 - name: Apply Calico custom resources
   ansible.builtin.command: kubectl apply -f /tmp/calico-custom-resources.yaml

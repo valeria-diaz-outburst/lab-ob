@@ -25,10 +25,23 @@
     group: ansible
     mode: "0600"
 
+- name: Wait for API server to be reachable
+  ansible.builtin.uri:
+    url: "https://10.51.0.159:6443/healthz"
+    validate_certs: false
+    status_code: 200
+  register: api_health
+  retries: 20
+  delay: 15
+  until: api_health.status == 200
+
 - name: Generate cluster join command
   ansible.builtin.command: kubeadm token create --print-join-command
   register: join_command
   changed_when: false
+  retries: 5
+  delay: 15
+  until: join_command.rc == 0
 
 - name: Store join command as fact for workers
   ansible.builtin.set_fact:

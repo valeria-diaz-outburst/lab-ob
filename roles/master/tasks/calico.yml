@@ -45,6 +45,15 @@
         name: default
       spec: {}
 
+- name: Wait for Calico CRDs to be established
+  ansible.builtin.command: >
+    kubectl wait --for=condition=established
+    crd installations.operator.tigera.io
+    --timeout=120s
+  environment:
+    KUBECONFIG: /home/ansible/.kube/config
+  changed_when: false
+
 - name: Apply Calico custom resources
   ansible.builtin.command: kubectl apply -f /tmp/calico-custom-resources.yaml
   environment:

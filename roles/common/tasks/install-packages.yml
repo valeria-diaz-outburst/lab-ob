@@ -27,11 +27,18 @@
     filename: kubernetes
     state: present
 
+- name: Check if containerd.io is already installed
+  ansible.builtin.command: dpkg -s containerd.io
+  register: containerd_io_check
+  failed_when: false
+  changed_when: false
+
 - name: Install containerd
   ansible.builtin.apt:
     name: containerd
     state: present
     update_cache: true
+  when: containerd_io_check.rc != 0
 
 - name: Install kubelet, kubeadm, and kubectl
   ansible.builtin.apt:

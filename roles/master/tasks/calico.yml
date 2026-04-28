@@ -1,70 +1,19 @@
 ---
-- name: Download Calico operator manifest
+- name: Download Calico manifest
   ansible.builtin.get_url:
-    url: "https://raw.githubusercontent.com/projectcalico/calico/v{{ calico_version }}/manifests/tigera-operator.yaml"
-    dest: /tmp/tigera-operator.yaml
+    url: "https://raw.githubusercontent.com/projectcalico/calico/v{{ calico_version }}/manifests/calico.yaml"
+    dest: /tmp/calico.yaml
     mode: "0644"
 
-- name: Apply Calico operator
-  ansible.builtin.command: kubectl apply -f /tmp/tigera-operator.yaml
+- name: Apply Calico manifest
+  ansible.builtin.command: kubectl apply -f /tmp/calico.yaml
   environment:
     KUBECONFIG: /home/ansible/.kube/config
 
-- name: Wait for Tigera operator to be ready
+- name: Wait for calico-node daemonset to be ready
   ansible.builtin.command: >
-    kubectl rollout status deployment/tigera-operator
-    -n tigera-operator
-    --timeout=300s
-  environment:
-    KUBECONFIG: /home/ansible/.kube/config
-  changed_when: false
-
-- name: Create Calico custom resources manifest
-  ansible.builtin.copy:
-    dest: /tmp/calico-custom-resources.yaml
-    mode: "0644"
-    content: |
-      apiVersion: operator.tigera.io/v1
-      kind: Installation
-      metadata:
-        name: default
-      spec:
-        calicoNetwork:
-          nodeAddressAutodetectionV4:
-            interface: "eth.*|ens.*|enp.*"
-          ipPools:
-          - name: default-ipv4-pool
-            cidr: {{ pod_network_cidr }}
-            encapsulation: VXLANCrossSubnet
-            natOutgoing: Enabled
-            nodeSelector: all()
-      ---
-      apiVersion: operator.tigera.io/v1
-      kind: APIServer
-      metadata:
-        name: default
-      spec: {}
-
-- name: Wait for Calico CRDs to be established
-  ansible.builtin.command: kubectl get crd installations.operator.tigera.io
-  environment:
-    KUBECONFIG: /home/ansible/.kube/config
-  register: crd_check
-  until: crd_check.rc == 0
-  retries: 30
-  delay: 10
-  changed_when: false
-
-- name: Apply Calico custom resources
-  ansible.builtin.command: kubectl apply -f /tmp/calico-custom-resources.yaml
-  environment:
-    KUBECONFIG: /home/ansible/.kube/config
-
-- name: Wait for Calico node pods to be ready
-  ansible.builtin.command: >
-    kubectl wait --for=condition=ready pod
-    -l k8s-app=calico-node
-    -n calico-system
+    kubectl rollout status daemonset/calico-node
+    -n kube-system
     --timeout=300s
   environment:
     KUBECONFIG: /home/ansible/.kube/config

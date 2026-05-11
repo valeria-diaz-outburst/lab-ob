@@ -15,5 +15,5 @@
   ansible.builtin.include_tasks: containerd.yml
 
 - name: Install Terraform and Terragrunt
-  ansible.builtin.include_tasks: terraform.yml
+  ansible.builtin.import_tasks: terraform.yml
   tags: terraform

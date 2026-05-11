@@ -26,5 +26,15 @@ ports:
     port: 443
     expose:
       default: true
+
+securityContext:
+  capabilities:
+    add:
+      - NET_BIND_SERVICE
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: false
+  runAsUser: 0
 EOF
 }

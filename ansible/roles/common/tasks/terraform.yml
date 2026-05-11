@@ -1,0 +1,35 @@
+---
+- name: Add HashiCorp GPG key
+  ansible.builtin.get_url:
+    url: https://apt.releases.hashicorp.com/gpg
+    dest: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    mode: '0644'
+
+- name: Add HashiCorp apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+    state: present
+    filename: hashicorp
+
+- name: Install Terraform
+  ansible.builtin.apt:
+    name: terraform
+    state: present
+    update_cache: yes
+
+- name: Get latest Terragrunt version
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest
+    return_content: yes
+  register: tg_release
+
+- name: Set Terragrunt version fact
+  ansible.builtin.set_fact:
+    terragrunt_version: "{{ (tg_release.content | from_json).tag_name }}"
+
+- name: Download Terragrunt binary
+  ansible.builtin.get_url:
+    url: "https://github.com/gruntwork-io/terragrunt/releases/download/{{ terragrunt_version }}/terragrunt_linux_amd64"
+    dest: /usr/local/bin/terragrunt
+    mode: '0755'
+    force: false

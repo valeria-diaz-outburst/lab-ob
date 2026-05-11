@@ -13,3 +13,6 @@
 
 - name: Install containerd
   ansible.builtin.include_tasks: containerd.yml
+
+- name: Install Terraform and Terragrunt
+  ansible.builtin.include_tasks: terraform.yml

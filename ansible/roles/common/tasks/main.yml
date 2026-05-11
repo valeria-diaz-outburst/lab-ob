@@ -16,3 +16,4 @@
 
 - name: Install Terraform and Terragrunt
   ansible.builtin.include_tasks: terraform.yml
+  tags: terraform

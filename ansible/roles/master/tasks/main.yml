@@ -49,3 +49,6 @@
 
 - name: Install Calico CNI
   ansible.builtin.include_tasks: calico.yml
+
+- name: Install local-path-provisioner
+  ansible.builtin.include_tasks: local-path-provisioner.yml

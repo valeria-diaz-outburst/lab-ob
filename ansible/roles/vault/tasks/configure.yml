@@ -4,6 +4,8 @@
     kubectl exec {{ vault_pod }} -n {{ vault_namespace }}
     -- env VAULT_TOKEN={{ vault_root_token }}
     vault secrets enable -path=secret kv-v2
+  environment:
+    KUBECONFIG: "{{ vault_kubeconfig }}"
   register: kv_enable
   failed_when:
     - kv_enable.rc != 0
@@ -18,6 +20,8 @@
     vault kv put secret/lab/authentik
     secret_key="{{ authentik_secret_key }}"
     postgresql_password="{{ postgresql_password }}"
+  environment:
+    KUBECONFIG: "{{ vault_kubeconfig }}"
   no_log: true
 
 - name: Confirm secrets written

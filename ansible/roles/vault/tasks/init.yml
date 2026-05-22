@@ -3,6 +3,8 @@
   ansible.builtin.command: >
     kubectl exec {{ vault_pod }} -n {{ vault_namespace }}
     -- vault status -format=json
+  environment:
+    KUBECONFIG: "{{ vault_kubeconfig }}"
   register: vault_status_raw
   failed_when: false
   changed_when: false
@@ -19,6 +21,8 @@
     -key-shares={{ vault_key_shares }}
     -key-threshold={{ vault_key_threshold }}
     -format=json
+  environment:
+    KUBECONFIG: "{{ vault_kubeconfig }}"
   register: vault_init_raw
   when: not vault_status.initialized | default(false)
 
@@ -51,6 +55,8 @@
   ansible.builtin.command: >
     kubectl exec {{ vault_pod }} -n {{ vault_namespace }}
     -- vault operator unseal {{ item }}
+  environment:
+    KUBECONFIG: "{{ vault_kubeconfig }}"
   loop: "{{ vault_init.unseal_keys_b64[:vault_key_threshold] }}"
   when: vault_init_raw is not skipped
   no_log: true

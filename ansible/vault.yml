@@ -1,0 +1,27 @@
+---
+- name: Initialize Vault
+  hosts: k8s_master
+  become: true
+  tags: [init]
+  vars:
+    vault_action: "init"
+  roles:
+    - vault
+
+- name: Unseal Vault
+  hosts: k8s_master
+  become: true
+  tags: [unseal]
+  vars:
+    vault_action: "unseal"
+  roles:
+    - vault
+
+- name: Configure Vault
+  hosts: k8s_master
+  become: true
+  tags: [configure]
+  vars:
+    vault_action: "configure"
+  roles:
+    - vault

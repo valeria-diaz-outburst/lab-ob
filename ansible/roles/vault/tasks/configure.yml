@@ -1,0 +1,25 @@
+---
+- name: Enable KV v2 secrets engine
+  ansible.builtin.command: >
+    kubectl exec {{ vault_pod }} -n {{ vault_namespace }}
+    -- env VAULT_TOKEN={{ vault_root_token }}
+    vault secrets enable -path=secret kv-v2
+  register: kv_enable
+  failed_when:
+    - kv_enable.rc != 0
+    - "'path is already in use' not in kv_enable.stderr"
+  changed_when: kv_enable.rc == 0
+  no_log: true
+
+- name: Write Authentik secrets to Vault
+  ansible.builtin.command: >
+    kubectl exec {{ vault_pod }} -n {{ vault_namespace }}
+    -- env VAULT_TOKEN={{ vault_root_token }}
+    vault kv put secret/lab/authentik
+    secret_key="{{ authentik_secret_key }}"
+    postgresql_password="{{ postgresql_password }}"
+  no_log: true
+
+- name: Confirm secrets written
+  ansible.builtin.debug:
+    msg: "Secrets written to secret/lab/authentik"

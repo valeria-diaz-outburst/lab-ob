@@ -1,0 +1,7 @@
+---
+vault_namespace: "deployment"
+vault_pod: "vault-0"
+vault_addr: "http://127.0.0.1:8200"
+vault_init_output_path: "/tmp/vault-init.json"
+vault_key_shares: 5
+vault_key_threshold: 3

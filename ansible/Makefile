@@ -1,7 +1,4 @@
-.PHONY: check apply requirements vault-init vault-unseal vault-configure
-
-requirements:
-	ansible-galaxy collection install -r requirements.yml
+.PHONY: check apply vault-init vault-unseal vault-configure
 
 check:
 	ansible-playbook initial-config.yml --check --diff

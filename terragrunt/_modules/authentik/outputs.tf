@@ -1,5 +1,5 @@
 output "namespace" {
-  value = kubernetes_namespace.deployment.metadata[0].name
+  value = kubernetes_namespace.authentik.metadata[0].name
 }
 
 output "release_name" {

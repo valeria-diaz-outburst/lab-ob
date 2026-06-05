@@ -16,6 +16,10 @@ terraform {
       source  = "hashicorp/helm"
       version = "~> 2.13"
     }
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 4.0"
+    }
   }
 }
 
@@ -28,6 +32,8 @@ provider "helm" {
     config_path = "~/.kube/config"
   }
 }
+
+provider "vault" {}
 EOF
 }
 

@@ -10,14 +10,3 @@ variable "chart_version" {
   default     = "2025.6.0"
 }
 
-variable "authentik_secret_key" {
-  description = "Authentik secret key (required)"
-  type        = string
-  sensitive   = true
-}
-
-variable "postgresql_password" {
-  description = "PostgreSQL password for Authentik"
-  type        = string
-  sensitive   = true
-}

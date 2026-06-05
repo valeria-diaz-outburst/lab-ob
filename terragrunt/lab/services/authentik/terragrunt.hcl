@@ -8,5 +8,5 @@ terraform {
 
 inputs = {
   namespace     = "authentik"
-  chart_version = "2025.6.0"
+  chart_version = "2024.12.3"
 }

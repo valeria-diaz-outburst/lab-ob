@@ -7,6 +7,6 @@ variable "namespace" {
 variable "chart_version" {
   description = "Authentik Helm chart version"
   type        = string
-  default     = "2025.6.0"
+  default     = "2024.12.3"
 }
 

@@ -3,7 +3,7 @@ data "vault_kv_secret_v2" "authentik" {
   name  = "lab/authentik"
 }
 
-resource "kubernetes_namespace" "deployment" {
+resource "kubernetes_namespace" "authentik" {
   metadata {
     name = var.namespace
   }
@@ -32,5 +32,5 @@ redis:
 EOF
   ]
 
-  depends_on = [kubernetes_namespace.deployment]
+  depends_on = [kubernetes_namespace.authentik]
 }

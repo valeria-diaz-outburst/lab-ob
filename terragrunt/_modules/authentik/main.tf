@@ -194,10 +194,10 @@ server:
     enabled: true
     ingressClassName: traefik
     hosts:
-      - host: authentik.lab
-        paths:
-          - path: /
-            pathType: Prefix
+      - authentik.lab
+    paths:
+      - path: /
+        pathType: Prefix
 
 postgresql:
   enabled: false

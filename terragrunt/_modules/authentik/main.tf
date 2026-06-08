@@ -189,16 +189,6 @@ authentik:
   redis:
     host: "authentik-redis"
 
-server:
-  ingress:
-    enabled: true
-    ingressClassName: traefik
-    hosts:
-      - authentik.lab
-    paths:
-      - path: /
-        pathType: Prefix
-
 postgresql:
   enabled: false
 
@@ -211,4 +201,38 @@ EOF
     kubernetes_service_v1.postgres,
     kubernetes_service_v1.redis,
   ]
+}
+
+resource "kubernetes_ingress_v1" "authentik" {
+  metadata {
+    name      = "authentik"
+    namespace = kubernetes_namespace.authentik.metadata[0].name
+    annotations = {
+      "kubernetes.io/ingress.class" = "traefik"
+    }
+  }
+
+  spec {
+    ingress_class_name = "traefik"
+
+    rule {
+      host = "authentik.lab"
+      http {
+        path {
+          path      = "/"
+          path_type = "Prefix"
+          backend {
+            service {
+              name = "authentik-server"
+              port {
+                number = 80
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  depends_on = [helm_release.authentik]
 }

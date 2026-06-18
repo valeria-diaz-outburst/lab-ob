@@ -25,8 +25,6 @@ terraform {
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
-  burst       = 100
-  qps         = 20
 }
 
 provider "helm" {

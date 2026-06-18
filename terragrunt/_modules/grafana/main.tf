@@ -59,4 +59,6 @@ resource "kubernetes_service" "grafana" {
 
     type = "LoadBalancer"
   }
+
+  depends_on = [kubernetes_deployment.grafana]
 }
